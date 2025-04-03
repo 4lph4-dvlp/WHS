@@ -39,15 +39,15 @@ struct tcpheader {
 };
 
 void got_packet(unsigned char *args, const struct pcap_pkthdr *header, const unsigned char *packet) {
-    struct ethheader *eth = (struct ethheader *)packet;
+    struct ethheader *eth = (struct ethheader *)packet; //ethernet 헤더 포인터
 
     if (ntohs(eth->ether_type) == 0x0800) { // IP 패킷 확인
-        struct ipheader *ip = (struct ipheader *)(packet + sizeof(struct ethheader));
+        struct ipheader *ip = (struct ipheader *)(packet + sizeof(struct ethheader)); //ethernet 헤더 다음 위치에 IP 헤더 포인터
 
         if (ip->iph_protocol == IPPROTO_TCP) { // TCP 패킷 확인
-            struct tcpheader *tcp = (struct tcpheader *)(packet + sizeof(struct ethheader) + (ip->iph_ihl * 4));
+            struct tcpheader *tcp = (struct tcpheader *)(packet + sizeof(struct ethheader) + (ip->iph_ihl * 4)); // IP 헤더 다음 위치에 TCP 헤더 포인터
 
-            // 현재 시간 가져오기
+            // 시간 가져오기
             time_t now = time(NULL);
             struct tm *tm_info = localtime(&now);
             char timestamp[20];
@@ -57,10 +57,10 @@ void got_packet(unsigned char *args, const struct pcap_pkthdr *header, const uns
 
             // 이더넷 헤더 출력
             printf("[Ethernet Header]\n");
-            printf("Source MAC : %02x:%02x:%02x:%02x:%02x:%02x\n", 
+            printf("Source MAC : %02x:%02x:%02x:%02x:%02x:%02x\n",
                 eth->ether_shost[0], eth->ether_shost[1], eth->ether_shost[2],
                 eth->ether_shost[3], eth->ether_shost[4], eth->ether_shost[5]);
-            printf("Destination MAC : %02x:%02x:%02x:%02x:%02x:%02x\n", 
+            printf("Destination MAC : %02x:%02x:%02x:%02x:%02x:%02x\n",
                 eth->ether_dhost[0], eth->ether_dhost[1], eth->ether_dhost[2],
                 eth->ether_dhost[3], eth->ether_dhost[4], eth->ether_dhost[5]);
             printf("-----------------------------------\n");
